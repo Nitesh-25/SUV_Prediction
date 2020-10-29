@@ -1,0 +1,49 @@
+#Importing required libraries
+import numpy as np #linear algebra
+import pandas as pd #data processing
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import cross_val_score, train_test_split
+
+df = pd.read_csv('/kaggle/input/users-of-a-social-network-who-bought-an-suv/Social_Network_Ads.csv')
+df.head(10)
+corr = df.corr() #Compute the correlation matrix
+sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
+            square=True, linewidths=.5, cbar_kws={"shrink": .5}) #Draw the heatmap with the mask and correct aspect ratio
+
+X = df.iloc[:, [2, 3]].values #defining our features and target variable
+y = df.iloc[:, 4].values
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 0) #Splitting the dataset into the Training set and Test set - 80-20 split
+
+
+X_train = sc.fit_transform(X_train) #Feature scaling as range of estimated salary and age is different
+sc = StandardScaler()
+X_test = sc.transform(X_test)
+
+#Classifying and prediction
+classifier = LogisticRegression(random_state = 0)  #Logisticclassifier
+classifier.fit(X_train, y_train)
+
+#Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print(cm, '\n')
+
+tp, fp, fn, tn = cm[0][0], cm[0][1], cm[1][0], cm[1][1]
+print("Recall: ", tp/(tp+fn))
+print("Precision: ", tp/(tp+fp))
+print("Accuracy: ", (tp+tn)/(tp+tn+fp+fn))
+
+[[57  1]
+ [ 5 17]] 
+ So with this model, we have 57 true positives, 17 true negatives, 5 false positives, and 1 false negatives.
+
+Recall:  0.9193548387096774
+Precision:  0.9827586206896551
+Accuracy:  0.925
+
+#Accuracy of .92, shows it is a good model with "True-Positive" = 74 [57+17].
